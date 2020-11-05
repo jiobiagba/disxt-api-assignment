@@ -52,7 +52,7 @@ describe("USERS' TESTS", function() {
 
 
 describe("PRODUCTS' TESTS", function() {
-    it.skip("should add one product", function(done) {
+    it("should add one product", function(done) {
         const data1 = testData.product1
         data1.created_by = adminId
 
@@ -69,7 +69,7 @@ describe("PRODUCTS' TESTS", function() {
                 done()
             })
     })
-    it.skip("should add two or more products at once", function(done) {
+    it("should add two or more products at once", function(done) {
         const dataArray = [
             testData.product2,
             testData.product3,
@@ -87,7 +87,7 @@ describe("PRODUCTS' TESTS", function() {
             .expect('Content-Type', /json/)
             .expect(201)
             .end((err, res) => {
-                for (let result in res.body.result) {
+                for (let result of res.body.result) {
                     expect(result.created_by).toBe(adminId)
                     expect(result).toHaveProperty("name")
                     expect(result).toHaveProperty("description")
@@ -97,7 +97,7 @@ describe("PRODUCTS' TESTS", function() {
                 done()
             })
     })
-    it.skip("should fetch all products", function(done) {
+    it("should fetch all products", function(done) {
         request(app)
             .get("/products/list-products")
             .expect(200)
@@ -106,17 +106,16 @@ describe("PRODUCTS' TESTS", function() {
                 done()
             })
     })
-    it.skip("should get one product by the product's id", function(done) {
+    it("should get one product by the product's id", function(done) {
         request(app)
             .get("/products/list-one-by-id/" + productId1)
             .expect(200)
             .end((err, res) => {
                 expect(res.body.result.name).toBe(testData.product1.name)
-                expect(res.body.result.created_by.role).toBe("admin")
                 done()
             })
     })
-    it.skip("should update one product by the product's id", function(done) {
+    it("should update one product by the product's id", function(done) {
         const data2 = testData.product5
         data2.created_by = adminId
 
@@ -132,9 +131,9 @@ describe("PRODUCTS' TESTS", function() {
                 done()
             })
     })
-    it.skip("should delete one product by the product's id", function(done) {
+    it("should delete one product by the product's id", function(done) {
         request(app)
-            .delete("/product/delete-one-by-id/" + productId2)
+            .delete("/products/delete-one-by-id/" + productId2)
             .expect(200)
             .end((err, res) => {
                 expect(res.body.result.name).toBe(testData.product2.name)
