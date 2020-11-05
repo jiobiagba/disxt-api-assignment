@@ -1,0 +1,4 @@
+exports.roles = [
+    "admin",
+    "client"
+]
