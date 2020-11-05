@@ -83,17 +83,35 @@ const logUserIn = async(req, res) => {
 
 
 const updateUser = async (req, res) => {
-    if (req.body.password) req.body.password = bcrypt.hashSync(req.body.password, 10)
-    (await UserModel.findOneAndUpdate({_id: req.params.id}, req.body, { new: true }).select("-password"))
-        .then((result) => {
-            res.status(200).send({ error: false, message: "Update Successful", result: result })
-        })
-        .catch((e) => {
-            res.status(400).send({ error: true, message: e })
-        })
+    typeof req.body.data === 'string' ? 
+    JSON.parse(req.body.data) : 
+    req.body.data
+
+    if (req.body.data.password) req.body.data.password = bcrypt.hashSync(req.body.data.password, 10)
+    await User.findOneAndUpdate({_id: req.params.id}, req.body.data, { new: true }).select("-password")
+    .exec()
+    .then((result) => {
+        res.status(200).send({ error: false, message: "Update Successful", result: result })
+    })
+    .catch((e) => {
+        res.status(400).send({ error: true, message: e })
+    })
+}
+
+
+const listUsers = async (req, res) => {
+    await User.find( req.query.info ? JSON.parse(req.query.info) : {} ).limit(req.query.limit ? parseInt(req.query.limit) : 100).select("-password")
+    .exec()
+    .then((result) => {
+        res.status(200).send({ error: false, message: "Fetch Successful", result: result })
+    })
+    .catch((e) => {
+        res.status(400).send({ error: true, message: e })
+    })
 }
 
 
 exports.registerUser = registerUser
 exports.logUserIn = logUserIn
 exports.updateUser = updateUser
+exports.listUsers = listUsers
