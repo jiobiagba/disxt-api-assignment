@@ -1,0 +1,18 @@
+version: "3.3"
+services:
+    mongodb:
+        image: mongo:4.2.10-bionic
+        restart: always
+        container_name: mongodb
+    api:
+        build:
+            context: .
+            dockerfile: DockerFile
+        ports:
+            - 5500:5500
+        volumes:
+            - .:/disxt-main-app
+        env_file:
+            - config.env
+        restart: on-failure
+        container_name: api
