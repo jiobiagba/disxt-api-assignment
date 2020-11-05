@@ -1,9 +1,11 @@
 const app = require("../index").app
 const expect = require("expect")
 const request = require("supertest")
+const User = require("../models/user").UserModel
+const Product = require("../models/product").ProductModel
 const testData = require("../test-data")
 
-let id = null, adminId = null, productId1 = null, productId2 = null
+let id = null, adminId = null, productId1 = null, productId2 = null, token = null
 
 describe("USERS' TESTS", function() {
     it("should allow anyone to register", function(done) {
@@ -31,6 +33,7 @@ describe("USERS' TESTS", function() {
                 expect(res.body.result.username).toBe("admin")
                 expect(res.body.result).toHaveProperty("token")
                 adminId = res.body.result._id
+                token = res.body.result.token
                 done()
             })
     })
@@ -40,6 +43,7 @@ describe("USERS' TESTS", function() {
             .send({ data: { username: "user1", password: "user1" } })
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
+
             .expect(201)
             .end((err, res) => {
                 expect(res.body.result.username).toBe("user1")
@@ -58,6 +62,7 @@ describe("PRODUCTS' TESTS", function() {
 
         request(app)
             .post("/products/add")
+            .set("Authorization", token)
             .send({ data: data1 })
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
@@ -82,6 +87,7 @@ describe("PRODUCTS' TESTS", function() {
 
         request(app)
             .post("/products/add")
+            .set("Authorization", token)
             .send({ data: dataArray })
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
@@ -100,6 +106,7 @@ describe("PRODUCTS' TESTS", function() {
     it("should fetch all products", function(done) {
         request(app)
             .get("/products/list-products")
+            .set("Authorization", token)
             .expect(200)
             .end((err, res) => {
                 expect(res.body.result.length).toBe(4)
@@ -109,6 +116,7 @@ describe("PRODUCTS' TESTS", function() {
     it("should get one product by the product's id", function(done) {
         request(app)
             .get("/products/list-one-by-id/" + productId1)
+            .set("Authorization", token)
             .expect(200)
             .end((err, res) => {
                 expect(res.body.result.name).toBe(testData.product1.name)
@@ -121,6 +129,7 @@ describe("PRODUCTS' TESTS", function() {
 
         request(app)
             .put("/products/update-one-by-id/" + productId1)
+            .set("Authorization", token)
             .send({ data: data2 })
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
@@ -134,12 +143,19 @@ describe("PRODUCTS' TESTS", function() {
     it("should delete one product by the product's id", function(done) {
         request(app)
             .delete("/products/delete-one-by-id/" + productId2)
+            .set("Authorization", token)
             .expect(200)
             .end((err, res) => {
                 expect(res.body.result.name).toBe(testData.product2.name)
                 done()
             })
     })
+})
+
+after("Clean Up Database", function(done) {
+    User.deleteMany({}).exec()
+    Product.deleteMany({}).exec()
+    done()
 })
 
 setTimeout(() => process.exit(0), 10000)
