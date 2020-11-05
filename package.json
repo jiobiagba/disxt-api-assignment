@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests --timeout 180000"
+    "test": "export DISXT_MAIN=$DISXT_TEST && mocha tests --timeout 180000"
   },
   "repository": {
     "type": "git",
