@@ -2,11 +2,19 @@
 const Product = require("../models/product").ProductModel
 
 exports.createProduct = async (req, res) => {
-    await Product.create(
-        typeof req.body.data === 'string' ? 
-        JSON.parse(req.body.data) : 
-        req.body.data
-    )
+    typeof req.body.data === 'string' ? 
+    JSON.parse(req.body.data) : 
+    req.body.data
+
+    if( Array.isArray(req.body.data)) {
+        for(let product of req.body.data) {
+            product.created_by = req.adminId
+        }
+    } else {
+        req.body.data.created_by = req.adminId
+    }
+
+    await Product.create(req.body.data)
     .then((result) => {
         res.status(201).send({ error: false, message: "Product(s) Creation Successful", result: result })
     })
