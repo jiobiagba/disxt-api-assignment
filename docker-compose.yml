@@ -11,8 +11,8 @@ services:
         ports:
             - 5500:5500
         volumes:
-            - .:/disxt-main-app
+            - ./:/disxt-main-app
         env_file:
             - config.env
-        restart: on-failure
+        restart: always
         container_name: api
