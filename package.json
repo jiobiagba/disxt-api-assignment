@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "export DISXT_MAIN=$DISXT_TEST && mocha tests --timeout 180000"
+    "test": "export DISXT_MAIN=$DISXT_TEST && mocha tests --timeout 180000",
+    "start": "node index.js",
+    "dev": "export NODE_ENV=development && nodemon index.js",
+    "docker": "sudo docker-compose up -d --build && sudo docker-compose ps"
   },
   "repository": {
     "type": "git",
